@@ -30,20 +30,21 @@ Before begin with the deployment of "The Ruby on Rails Web Application with Terr
 ###  Terraform Script: 
     You will use Terraform scripts to provision the infrastructure for the web application. These scripts will define the desired state of the infrastructure, enabling you to automate the provisioning process effectively.
 ## Terraform Script Execution
-Follow these steps to execute your Terraform scripts:
+	Follow these steps to execute your Terraform scripts:
 ### Set-Up EC2 Instance
 	1. Launch an EC2 instance running Ubuntu 22.04 LTS.
 	2. Create an IAM user in AWS with programmatic access and AdministratorAccess permissions.
 	3. Configure AWS CLI on the EC2 instance with the IAM user's credentials.
 ### Install Terraform
-   Download the Terraform binary from the official website.
-        I’m using Ubuntu so here are the commands to get Terraform
-        1. Download Terraform stable release here.
-           Go to browser search (Install | Terraform | HashiCorp Developer)
-           Click download options in the top of the page
-           Choose operating system ex. (Linux or Ubuntu )
-           Select Package manager ex. (Linux or Ubuntu)
-           Executing the following commands one by one for Amazon Linux
+	1. Download the Terraform binary from the official website.
+
+
+        1 Download Terraform stable release here.
+         '(Install | Terraform | HashiCorp Developer)'
+        2 Click download options in the top of the page
+        3 Choose operating system ex. (Linux or Ubuntu )
+        4 Select Package manager ex. (Linux or Ubuntu)
+        5 Executing the following commands one by one for Amazon Linux
 
         '$ sudo yum install -y yum-utils shadow-utils'
    
@@ -72,11 +73,11 @@ Follow these steps to execute your Terraform scripts:
         '$ terraform validate'
         
 ### Plan Terraform Deployment
-	2.Generate an execution plan with terraform plan.
+	1.Generate an execution plan with terraform plan.
 
         '$ terraform plan'
         
-	3.Review the plan to ensure it aligns with your desired infrastructure changes.
+	2.Review the plan to ensure it aligns with your desired infrastructure changes.
 ### Apply Terraform Configuration
         1.Apply your Terraform configuration with terraform apply.
         
