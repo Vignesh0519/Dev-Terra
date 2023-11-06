@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        
+        AWS_REGION = 'ap-southeast-1'
+        AWS_ACCESS_KEY_ID = credentials
+        AWS_SECRET_ACCESS_KEY = credentials
+        ECR_REPO_NAME = 'mydemo-ecr-repo'
+        DOCKERFILE_PATH = 'DevOps-Interview-ROR-App/docker/';
+        EKS_CLUSTER_NAME = 'myeks-cluster'
+    }
+
+    stages {
+    stage('Checkout') {
+        steps {
+            script {
+                def gitUrl = 'https://github.com/Vignesh0519/Dev-Terra.git'
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], userRemoteConfigs: [[url: gitUrl]]])
+            }
+        }
+    }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def dockerImage = docker.build("${ECR_REPO_NAME}:${env.BUILD_ID}", "-f ${DOCKERFILE_PATH} .")
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                script {
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_NAME}"
+                    docker.image("${ECR_REPO_NAME}:${env.BUILD_ID}").push()
+                }
+            }
+        }
+    }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    sh "aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME} --kubeconfig ${KUBE_CONFIG}"
+                    sh "kubectl config use-context ${EKS_CLUSTER_NAME}"
+                    sh "kubectl set image deployment/your-deployment-name your-container-name=${ECR_REPO_NAME}:${env.BUILD_ID}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                emailext subject: "Build Notification - ${currentBuild.result}", 
+                    body: "This is to notify the Eks-Deployment was done for Rub-on-Rails Web-application, Feel-free to reach out Devops tean for further assistance."",
+                    Build URL: \${BUILD_URL}
+                    Build Status: \${currentBuild.result}
+                    """,
+                    to: "vigneshmahesh051@example.com", 
+                    attachLog: true
+            }
+        }
+    }
+
+
